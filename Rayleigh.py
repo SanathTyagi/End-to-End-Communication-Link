@@ -1,17 +1,28 @@
 import numpy as np
 
 """
-    Simulates an Rayleigh Fading Channel.
-    
+    Simulates a slow, flat Rayleigh fading channel: r(t) = h(t)*s(t) + n(t)
+
+    Fading is slow — h is drawn once per symbol and held constant across all
+    L_pulse samples within that symbol.
+
+    Each coefficient h = alpha * exp(j*phi), where:
+        alpha ~ Rayleigh(1/sqrt(2))   (unit mean power)
+        phi   ~ Uniform(-pi, pi)
+
+    Noise is complex AWGN: n with mean = 0 and variance = (No/(2dt)), with No = Eb / SNR_linear.
+
     Args:
-        transmitted_signal (array): The modulated continuous-time signal.
-        SNR_dB (float): Signal-to-Noise Ratio in dB (Eb/N0).
-        Eb (float): Energy per bit (used to scale noise relative to signal).
-        dt (float): Sampling interval (used for noise bandwidth scaling).
-        
+        transmitted_signal (array): Modulated continuous-time signal.
+        L_pulse (int)             : Samples per symbol.
+        M (int)                   : Modulation order (e.g. 2 for BPSK).
+        SNR_dB (float)            : Eb/N0 in dB.
+        Eb (float)                : Energy per bit.
+        dt (float)                : Sampling interval.
+
     Returns:
-        received_signal (array): The received signal with added noise.
-        h:rayleigh coeff
+        received_signal (array)        : Faded and noisy received signal.
+        rayleigh_coeff_waveform (array): Fading coefficients h(t), constant per symbol.
     """
 def Rayleigh_Channel(transmitted_signal, L_pulse, M, SNR_dB, Eb, dt):
     N=len(transmitted_signal)
