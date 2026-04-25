@@ -1,11 +1,13 @@
 import numpy as np
 from Source_Coding import get_huffman_bits
-from Source_Coding import decode_huffman_bits
+from Convolutional_Coding import Convolutional_Coding
 from BPSK_Modulator import BPSK_modulator
 from AWGN_Channel import AWGN_Channel
-from Convolutional_Coding import Convolutional_Coding
+from Rayleigh import Rayleigh_Channel
+from Equalizer import Equalizer
 from Demodulator_BPSK import Demodulator_BPSK
 from Viterbi_Decoder import Viterbi_Decoder
+from Source_Coding import decode_huffman_bits
 from Simulation import ber_simulation
 # ==========================================
 # 1. SYSTEM CONFIGURATIONS (The "Knobs")
@@ -15,7 +17,8 @@ dt=1/fs          # Time Step
 T=2              # Symbol Duration (Seconds)
 A=1              # Signal Amplitude
 fc=2/T           # Carrier Frequency (for the basis function)
-Monte_Carlo_Runs=10000 # Total bits to simulate for BER curves
+Monte_Carlo_Runs=100000 # Total bits to simulate for BER curves
+
 
 
 
@@ -27,13 +30,14 @@ t_pulse=np.arange(0,T,dt)
 def pulse(T,fc,t_pulse):
         return np.sqrt(2/T)*np.cos(2*np.pi*fc*t_pulse)
 p=pulse(T,fc,t_pulse)
+L_pulse=len(p)
 Ep=np.sum(p*p)*dt  # Energy of the pulse
 
 # ==========================================
-# 3. THE MAIN PIPELINE 
+# 3. THE MAIN PIPELINE -Pulse Level
 # ==========================================
 print("--- Starting System Validation ---")
-input_text="sanath"
+input_text="Sanath Kumar Tyagi the Future Engineer"
 print(f"Original Message: {input_text}")
 
 # Step A: Source Coding
@@ -45,6 +49,7 @@ coded_bits=Convolutional_Coding(encoded_bits)
 # Step C: Modulation (Generating the Waveform)
 t,transmitted_signal,M=BPSK_modulator(coded_bits,dt,T,A,p)
 Eb=Ep/np.log2(M) # For BPSK, Energy per bit = Energy per pulse
+
 
 # Step D: Ideal Demodulation & Decoding (Checking if the system is perfect without noise)
 soft_bits_ideal,estimated_bits_ideal = Demodulator_BPSK(transmitted_signal, p, dt)
@@ -59,10 +64,8 @@ print("System Validation: SUCCESS\n")
 
 
 # ==========================================
-# 4. PERFORMANCE ANALYSIS (Monte Carlo)
+# 4.PERFORMANCE ANALYSIS (Monte Carlo) 
 # ==========================================
 print(f"--- Running Monte Carlo Simulation ({Monte_Carlo_Runs} bits) ---")
-#ber_simulation function will handle the loop, the AWGN channel, and plot the final BER curves.
-ber_simulation(encoded_bits,coded_bits,Monte_Carlo_Runs,transmitted_signal,p,Eb,dt)
-
-print("Simulation Complete. BER Plot and Constellation saved.")
+ber_simulation(encoded_bits,coded_bits,Monte_Carlo_Runs,p,M,Eb,dt)
+print("Simulation Complete.")
