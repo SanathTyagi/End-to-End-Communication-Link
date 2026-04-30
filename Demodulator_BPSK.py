@@ -40,6 +40,6 @@ def Demodulator_BPSK(received_signal,p,dt):
     # The decision boundary for BPSK is 0.
     #   If Energy > 0 --> Estimate Bit 0 (Mapped to +A)
     #   If Energy < 0 --> Estimate Bit 1 (Mapped to -A)
-    estimated_bits=np.where(output_sampled>=0,0,1)
+    estimated_bits=np.where(np.real(output_sampled)>=0,0,1)
 
     return output_sampled,estimated_bits
