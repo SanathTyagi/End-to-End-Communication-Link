@@ -71,8 +71,38 @@ def ber_simulation(encoded_bits,coded_bits,Monte_Carlo_Runs,p,M,Eb,dt):
     plt.ylabel('Bit Error Rate (BER)', fontsize=12)
     plt.grid(True, which="both", linestyle='--', alpha=0.6)
     plt.legend(fontsize=11, loc='best')
+    plt.savefig('AWGN_VS_Rayleigh.png', dpi=300, bbox_inches='tight')
     plt.show()
     return
+
+def plot_constellation_BPSK(soft_bits_I, soft_bits_Q, transmitted_bits, SNR_dB):
+    """
+    Visualizes the BPSK Constellation with Soft Decision outputs.
+    """
+    # Create masks to separate transmitted Bit 0 and Bit 1 for color coding
+    mask_0=(transmitted_bits==0)
+    mask_1=(transmitted_bits==1)
+
+
+
+    # Plotting soft outputs
+    plt.figure(figsize=(7, 5), dpi=120)
+    
+    plt.scatter(soft_bits_I[mask_0],soft_bits_Q[mask_0],color='green',label='Tx bit 0',s=5,alpha=0.6)
+    plt.scatter(soft_bits_I[mask_1],soft_bits_Q[mask_1],color='red',label='Tx bit 1',s=5,alpha=0.6)
+
+    #Decision Boundary at 0
+    plt.axvline(0,color='black',linestyle='--',linewidth=1.5,label='Decision Boundary')
+
+    plt.title(f'BPSK Constellation Diagram (SNR = {SNR_dB} dB)', fontsize=12, fontweight='bold')
+    plt.xlabel('Soft Decision Output (Energy)', fontsize=10)
+    plt.grid(True, alpha=0.3)
+    plt.legend(loc='upper right')
+    plt.tight_layout()
+    plt.savefig('BPSK_Constellation_Diagram.png', dpi=300, bbox_inches='tight')
+    plt.show()
+    return
+
 
 
 
