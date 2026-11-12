@@ -1,16 +1,28 @@
 import numpy as np
 
 """
-    Simulates a slow, flat Rayleigh fading channel: r(t) = h(t)*s(t) + n(t)
+    Simulates a fast, flat Rayleigh fading channel: r(t) = h(t)*s(t) + n(t)
+    Fading is flat: h is scalar complex, not a array
+    Fading is fast — h is drawn once per symbol and held constant across all
+    L_pulse samples within that symbol, basically Symbol Period(T_s) = Coherance Time(T_c).
+    So Fast+Flat Rayleigh Fading
 
-    Fading is slow — h is drawn once per symbol and held constant across all
-    L_pulse samples within that symbol.
 
-    Each coefficient h = alpha * exp(j*phi), where:
-        alpha ~ Rayleigh(1/sqrt(2))   (unit mean power)
-        phi   ~ Uniform(-pi, pi)
-
-    Noise is complex AWGN: n with mean = 0 and variance = (No/(2dt)), with No = Eb / SNR_linear.
+    Each coefficient is h = x + jy, with x, y are i.i.d. N(0, 1/2).
+    Their joint pdf, converted to polar form via the Jacobian (|J| = a),
+    factors into independent marginals: amplitude Rayleigh distribution, and phase φ Uniform distribution.
+    The variance 1/2 per component is chosen so that E[|h|²] = 1 (unit average channel power),
+    so Eb/N0 is the average received SNR and results are comparable to the theoretical Rayleigh BER.
+    h = alpha * exp(j*phi),
+    where:
+        alpha=Rayleigh(1/sqrt(2))
+        phi=Uniform(-pi, pi)
+    Noise is AWGN: n= I+jQ where I and Q are Gaussian Random Variable(independent) with mean = 0 and variance = (No/(2dt)),
+    with No = Eb / SNR_linear.
+    Why this variance?
+    Sampling frequency is fs=1/dt, so in frequency domain it expands from -fs/2 to +fs/2 while AWGN is No/2 for all frequency,
+    therefore the avg power (integrating PSD to get band power)=fs.No/2=(No/(2dt))
+    So total power of complex AWGN=No/dt.
 
     Args:
         transmitted_signal (array): Modulated continuous-time signal.
@@ -22,7 +34,7 @@ import numpy as np
 
     Returns:
         received_signal (array)        : Faded and noisy received signal.
-        rayleigh_coeff_waveform (array): Fading coefficients h(t), constant per symbol.
+        rayleigh_coeff_waveform (array): Fading coefficients h(t), constant per symbol, they are further used in equalizer.
     """
 def Rayleigh_Channel(transmitted_signal, L_pulse, M, SNR_dB, Eb, dt):
     N=len(transmitted_signal)
@@ -34,7 +46,7 @@ def Rayleigh_Channel(transmitted_signal, L_pulse, M, SNR_dB, Eb, dt):
     sigma=np.sqrt(No/(2*dt))
     noise=np.random.normal(0,sigma,size=N)+(1j*(np.random.normal(0,sigma,size=N)))
     
-    rayleigh_coeff_amplitude=np.random.rayleigh(scale=1/np.sqrt(2),size=number_of_symbols)
+    rayleigh_coeff_amplitude=np.random.rayleigh(scale=1/np.sqrt(2),size=number_of_symbols)   #variance=1/2  so scale=1/np.sqrt(2)
     rayleigh_coeff_phase=np.random.uniform(low=-np.pi,high=np.pi,size=number_of_symbols)
     rayleigh_coeff=rayleigh_coeff_amplitude*np.exp(rayleigh_coeff_phase*1j)
     
