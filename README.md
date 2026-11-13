@@ -37,6 +37,6 @@ The simulation results are benchmarked against the following exact theoretical e
 * `Equalizer.py` — MMSE equalization logic.
 * *(Archive)* `Convolutional_Coding.py`, `Viterbi_Decoder.py`, `Source_Coding.py` — Earlier phase modules for Huffman and channel coding.
 
-##5. Future Plans
-*Practical Channel Estimation: Replace the ideal channel estimation assumption with pilot-symbol insertion and estimation (e.g., Least Squares).
-*Antenna Diversity: Implement multiple receive antennas (SIMO/Maximum Ratio Combining) to observe diversity gains against deep fades.
+## 5. Future Plans
+* Practical Channel Estimation: Replace the ideal channel estimation assumption with pilot-symbol insertion and estimation (e.g., Least Squares).
+* Antenna Diversity: Implement multiple receive antennas (SIMO/Maximum Ratio Combining) to observe diversity gains against deep fades.
