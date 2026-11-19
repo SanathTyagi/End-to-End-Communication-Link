@@ -5,7 +5,7 @@ def AWGN_Channel(transmitted_signal,SNR_dB,Eb,dt):
     """
     Simulates an Additive White Gaussian Noise (AWGN) Channel.
     
-    Args:
+    Args:git add AWGN_Channel.py
         transmitted_signal (array): The modulated continuous-time signal.
         SNR_dB (float): Signal-to-Noise Ratio in dB (Eb/N0).
         Eb (float): Energy per bit (used to scale noise relative to signal).
@@ -33,7 +33,8 @@ def AWGN_Channel(transmitted_signal,SNR_dB,Eb,dt):
 
     # 4. Generate Noise Vector
     # Creates Gaussian noise with Mean = 0 and Std Dev = sigma
-    noise=np.random.normal(0,sigma,size=N)
+    # Complex Noise Addition total complex noise power=No divides equally among I and Q phase.
+    noise=np.random.normal(0,sigma,size=N)+(1j*(np.random.normal(0,sigma,size=N)))
 
     # 5. Add Noise to Signal
     received_bits=transmitted_signal+noise
