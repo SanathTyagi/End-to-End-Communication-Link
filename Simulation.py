@@ -43,7 +43,8 @@ def ber_simulation(encoded_bits,coded_bits,Monte_Carlo_Runs,p,M,Eb,dt):
             #=========================
             received_signal = AWGN_Channel(transmitted_symbols,SNR_dB,Eb,1)
             #Decision Rule
-            estimated_bits_AWGN=np.where(received_signal>=0, 0, 1)
+            #Since Complex Noise is added but BPSK deals with I-phase only, that is why used np.real().
+            estimated_bits_AWGN=np.where(np.real(received_signal)>=0, 0, 1)
             
             #BER for AWGN
             estimated_bits_matrix_AWGN = np.array(estimated_bits_AWGN).reshape(Batch_size,-1)
